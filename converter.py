@@ -5,7 +5,7 @@ import os
 
 def read_folder_and_create_excel(directory):
     # Put all the folder names in the directory into a list
-    folders = [folder for folder in os.listdir(directory) if os.path.isdir(os.path.join(directory, folder)) and '_duplicate' in folder]
+    folders = [folder for folder in os.listdir(directory) if os.path.isdir(os.path.join(directory, folder)) and '_duplicates' in folder]
 
     # Extract the temperature and current setting and save them in a dataframe
     for folder in folders:
@@ -41,7 +41,7 @@ def read_folder_and_create_excel(directory):
             print("Excel file already exists.")
 
 def duplicate_and_rename_folder(directory):
-    folders = [folder for folder in os.listdir(directory) if os.path.isdir(os.path.join(directory, folder)) and 'A' in folder and 'C' in folder and '_duplicate' not in folder]
+    folders = [folder for folder in os.listdir(directory) if os.path.isdir(os.path.join(directory, folder)) and 'A' in folder and 'C' in folder and '_duplicates' not in folder]
     for folder in folders:
         source_folder_path = os.path.join(directory, folder)
         target_folder_path = os.path.join(directory, folder +'_duplicates')
@@ -60,16 +60,17 @@ def duplicate_and_rename_folder(directory):
         print(f"Files from {folders[0]} have been duplicated and converted where necessary.")
 
 def read_and_update_excel(directory):
-    folders = [folder for folder in os.listdir(directory) if os.path.isdir(os.path.join(directory, folder)) and '_duplicated' in folder]
+    folders = [folder for folder in os.listdir(directory) if os.path.isdir(os.path.join(directory, folder)) and '_duplicates' in folder]
     for folder in folders:
         folder_path = os.path.join(directory, folder)
-        excel_path = os.path.join(folder_path, f"{folder}.xlsx")
+        excel_path = os.path.join(folder_path, f"{folder[:-11]}.xlsx")
 
         if os.path.exists(excel_path):
             df = pd.read_excel(excel_path)
         else:
-            read_folder_and_create_excel(directory)
-            df = pd.read_excel(excel_path)
+            print(f"Starting a new excel file for {folder[:-11]}.")
+            df = pd.DataFrame()
+
         columns = ['time (s)']
         measurements = ['actual temperature (C)']
         for ch in range(1, 7):
@@ -80,7 +81,7 @@ def read_and_update_excel(directory):
 
         for filename in os.listdir(folder):
             if filename.endswith('.txt'):
-                file_path = os.path.join(folder, filename)
+                file_path = os.path.join(folder, folder, filename)
                 with open(file_path, 'r') as file:
                     lines = [line.strip().split() for line in file.readlines()[:7]]
                     data = np.array(lines, dtype=float)
@@ -94,14 +95,17 @@ def read_and_update_excel(directory):
                     row = [time, temperature] + [val for pair in zip(currents, volatges, resistances) for val in pair]
                     new_data.loc[len(new_data)] = row
         
-        if 'df' in locals():
+        if not df.empty:
             # full_df = pd.concat([df, new_data], axis=1, ignore_index=False)
-            full_df = pd.merge(df, new_data, left_index=True, right_index=True)
+            full_df = pd.merge(df, new_data, left_index=True, right_index=True, how='outer')
             full_df.to_excel(excel_path, index=False)
             print("Excel file has been updated successfully!")
         else:
             new_data.to_excel(excel_path, index=False)
             print(f"Excel file {excel_path} has been created and data added successfully!")
+        
+        shutil.rmtree(os.path.join(directory, folder))
+        print(f"Duplicated folder {folder} has been deleted")
 
 def main():
     directory_path = os.getcwd()

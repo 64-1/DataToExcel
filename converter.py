@@ -28,8 +28,8 @@ def read_folder_and_create_excel(directory):
                 continue
 
     df = pd.DataFrame({
-        'Set Temperature (C)': temperatures * 14,
-        'Set Current (A)': currents * 14
+        'Set Temperature (C)': temperatures * 15,
+        'Set Current (A)': currents * 15
     })
 
     excel_path = os.path.join(directory, "output.xlsx")
@@ -66,6 +66,7 @@ def read_and_update_excel(directory, excel_path):
         df = pd.read_excel(excel_path)
     else:
         read_folder_and_create_excel(directory)
+        df = pd.read.excel(excel_path)
     
     target_folder_path = os.path.join(directory, os.listdir(directory)[0] + '_duplicates')
 
@@ -85,7 +86,7 @@ def read_and_update_excel(directory, excel_path):
                 data = np.array(lines, dtype=float)
 
                 time = data[0, 0]
-                temperature = data[1, 1]
+                temperature = data[0, 1]
                 currents = data[1:, 6]
                 volatges = data[1:, 0]
                 resistances = volatges / currents
@@ -93,7 +94,8 @@ def read_and_update_excel(directory, excel_path):
                 row = [time, temperature] + [val for pair in zip(currents, volatges, resistances) for val in pair]
                 new_data.loc[len(new_data)] = row
     
-    full_df = pd.concat([df, new_data], ignore_index=True)
+    # full_df = pd.concat([df, new_data], axis=1, ignore_index=False)
+    full_df = pd.merge(df, new_data, left_index=True, right_index=True)
 
     full_df.to_excel(excel_path, index=False)
     print("Excel file has been updated successfully!")

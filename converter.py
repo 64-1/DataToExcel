@@ -59,15 +59,17 @@ def duplicate_and_rename_folder(directory):
         
         print(f"Files from {folders[0]} have been duplicated and converted where necessary.")
 
-def read_and_update_excel(directory, excel_path):
-    if os.path.exists(excel_path):
-        df = pd.read_excel(excel_path)
-    else:
-        read_folder_and_create_excel(directory)
-        df = pd.read_excel(excel_path)
-    
+def read_and_update_excel(directory):
     folders = [folder for folder in os.listdir(directory) if os.path.isdir(os.path.join(directory, folder)) and '_duplicated' in folder]
     for folder in folders:
+        folder_path = os.path.join(directory, folder)
+        excel_path = os.path.join(folder_path, f"{folder}.xlsx")
+
+        if os.path.exists(excel_path):
+            df = pd.read_excel(excel_path)
+        else:
+            read_folder_and_create_excel(directory)
+            df = pd.read_excel(excel_path)
         columns = ['time (s)']
         measurements = ['actual temperature (C)']
         for ch in range(1, 7):
@@ -92,14 +94,20 @@ def read_and_update_excel(directory, excel_path):
                     row = [time, temperature] + [val for pair in zip(currents, volatges, resistances) for val in pair]
                     new_data.loc[len(new_data)] = row
         
-        # full_df = pd.concat([df, new_data], axis=1, ignore_index=False)
-        full_df = pd.merge(df, new_data, left_index=True, right_index=True)
+        if 'df' in locals():
+            # full_df = pd.concat([df, new_data], axis=1, ignore_index=False)
+            full_df = pd.merge(df, new_data, left_index=True, right_index=True)
+            full_df.to_excel(excel_path, index=False)
+            print("Excel file has been updated successfully!")
+        else:
+            new_data.to_excel(excel_path, index=False)
+            print(f"Excel file {excel_path} has been created and data added successfully!")
 
-        full_df.to_excel(excel_path, index=False)
-        print("Excel file has been updated successfully!")
+def main():
+    directory_path = os.getcwd()
+    duplicate_and_rename_folder(directory_path)
+    read_folder_and_create_excel(directory_path)
+    read_and_update_excel(directory_path)
 
-directory_path = os.getcwd()
-excel_path = os.path.join(directory_path, "output.xlsx")
-duplicate_and_rename_folder(directory_path)
-read_folder_and_create_excel(directory_path)
-read_and_update_excel(directory_path, excel_path)
+if __name__ == "__main__":
+    main()

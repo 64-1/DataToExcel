@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 import shutil
 import os
 
@@ -25,9 +26,10 @@ def read_folder_and_create_excel(directory):
                 currents.append(current)
             except ValueError:
                 continue
+
     df = pd.DataFrame({
-        'Set Temperature': temperatures,
-        'Set Current': currents
+        'Set Temperature (C)': temperatures * 14,
+        'Set Current (A)': currents * 14
     })
 
     excel_path = os.path.join(directory, "output.xlsx")
@@ -58,6 +60,46 @@ def duplicate_and_rename_folder(directory):
                 shutil.move(duplicated_file, txt_file_path)
         
         print(f"Files from {folders[0]} have been duplicated and converted where necessary.")
+
+def read_and_update_excel(directory, excel_path):
+    if os.path.exists(excel_path):
+        df = pd.read_excel(excel_path)
+    else:
+        read_folder_and_create_excel(directory)
+    
+    target_folder_path = os.path.join(directory, os.listdir(directory)[0] + '_duplicates')
+
+    columns = ['time (s)']
+    measurements = ['actual temperature (C)']
+    for ch in range(1, 7):
+        measurements +=[f'CH{ch} actual current (A)', f'CH{ch} actual Voltage', f'CH{ch} resistance (ohm)']
+    columns.extend(measurements)
+
+    new_data = pd.DataFrame(columns=columns)
+
+    for filename in os.listdir(target_folder_path):
+        if filename.endswith('.txt'):
+            file_path = os.path.join(target_folder_path, filename)
+            with open(file_path, 'r') as file:
+                lines = [line.strip().split() for line in file.readlines()[:7]]
+                data = np.array(lines, dtype=float)
+
+                time = data[0, 0]
+                temperature = data[1, 1]
+                currents = data[1:, 6]
+                volatges = data[1:, 0]
+                resistances = volatges / currents
+
+                row = [time, temperature] + [val for pair in zip(currents, volatges, resistances) for val in pair]
+                new_data.loc[len(new_data)] = row
+    
+    full_df = pd.concat([df, new_data], ignore_index=True)
+
+    full_df.to_excel(excel_path, index=False)
+    print("Excel file has been updated successfully!")
+
 directory_path = os.getcwd()
-# read_folder_and_create_excel(directory_path)
+excel_path = os.path.join(directory_path, "output.xlsx")
 duplicate_and_rename_folder(directory_path)
+read_folder_and_create_excel(directory_path)
+read_and_update_excel(directory_path, excel_path)

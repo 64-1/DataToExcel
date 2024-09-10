@@ -3,6 +3,8 @@ import numpy as np
 import shutil
 import os
 
+from pathlib import Path
+
 def read_folder_and_create_excel(directory):
     # Put all the folder names in the directory into a list
     folders = [folder for folder in os.listdir(directory) if os.path.isdir(os.path.join(directory, folder)) and '_duplicate' in folder]
@@ -24,7 +26,7 @@ def read_folder_and_create_excel(directory):
             except ValueError:
                 continue
             
-        filenumber = len([name for name in os.listdir('.') if os.path.isfile(name)])
+        filenumber = len([name for name in os.listdir(os.path.join(directory, folder)) if os.path.isfile(os.path.join(directory, folder, name))])
 
         df = pd.DataFrame({
             'Set Temperature (C)': temperatures * filenumber,
@@ -60,7 +62,7 @@ def duplicate_and_rename_folder(directory):
         print(f"Files from {folders[0]} have been duplicated and converted where necessary.")
 
 def read_and_update_excel(directory):
-    folders = [folder for folder in os.listdir(directory) if os.path.isdir(os.path.join(directory, folder)) and '_duplicated' in folder]
+    folders = [folder for folder in os.listdir(directory) if os.path.isdir(os.path.join(directory, folder)) and '_duplicates' in folder]
     for folder in folders:
         folder_path = os.path.join(directory, folder)
         excel_path = os.path.join(folder_path, f"{folder}.xlsx")
@@ -80,7 +82,7 @@ def read_and_update_excel(directory):
 
         for filename in os.listdir(folder):
             if filename.endswith('.txt'):
-                file_path = os.path.join(folder, filename)
+                file_path = os.path.join(directory, folder, filename)
                 with open(file_path, 'r') as file:
                     lines = [line.strip().split() for line in file.readlines()[:7]]
                     data = np.array(lines, dtype=float)
@@ -98,10 +100,20 @@ def read_and_update_excel(directory):
             # full_df = pd.concat([df, new_data], axis=1, ignore_index=False)
             full_df = pd.merge(df, new_data, left_index=True, right_index=True)
             full_df.to_excel(excel_path, index=False)
+            path = Path(excel_path)
+            new_file_name = path.stem.replace('_duplicates', '') + path.suffix
+            # Define the destination path (moving the file to its parent directory)
+            destination_path = path.parent.parent / new_file_name
+
+            # Move the file to its parent directory
+            shutil.move(str(path), str(destination_path))
             print("Excel file has been updated successfully!")
         else:
             new_data.to_excel(excel_path, index=False)
             print(f"Excel file {excel_path} has been created and data added successfully!")
+        
+        shutil.rmtree(os.path.join(directory, folder))
+        print(f"Duplicated folder {folder} has been deleted")
 
 def main():
     directory_path = os.getcwd()

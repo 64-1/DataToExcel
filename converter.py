@@ -2,13 +2,14 @@ import pandas as pd
 import numpy as np
 import shutil
 import os
-
 from pathlib import Path
+from openpyxl import load_workbook
+from openpyxl.utils.dataframe import dataframe_to_rows
 
 def read_folder_and_create_excel(directory):
     # Put all the folder names in the directory into a list
     folders = [folder for folder in os.listdir(directory) if os.path.isdir(os.path.join(directory, folder)) and '_duplicate' in folder]
-
+    
     # Extract the temperature and current setting and save them in a dataframe
     for folder in folders:
         temperatures = []
@@ -38,9 +39,10 @@ def read_folder_and_create_excel(directory):
         # Write to excel file created
         if not os.path.exists(excel_path):
             df.to_excel(excel_path, index=False)
-            print("Excel file has been created successfully!")
         else:
             print("Excel file already exists.")
+    
+    
 
 def duplicate_and_rename_folder(directory):
     folders = [folder for folder in os.listdir(directory) if os.path.isdir(os.path.join(directory, folder)) and 'A' in folder and 'C' in folder and '_duplicate' not in folder]
@@ -59,8 +61,6 @@ def duplicate_and_rename_folder(directory):
                 txt_file_path = os.path.join(target_folder_path, txt_filename)
                 shutil.move(duplicated_file, txt_file_path)
         
-        print(f"Files from {folders[0]} have been duplicated and converted where necessary.")
-
 def read_and_update_excel(directory):
     folders = [folder for folder in os.listdir(directory) if os.path.isdir(os.path.join(directory, folder)) and '_duplicates' in folder]
     for folder in folders:
@@ -107,19 +107,69 @@ def read_and_update_excel(directory):
 
             # Move the file to its parent directory
             shutil.move(str(path), str(destination_path))
-            print("Excel file has been updated successfully!")
         else:
             new_data.to_excel(excel_path, index=False)
-            print(f"Excel file {excel_path} has been created and data added successfully!")
         
         shutil.rmtree(os.path.join(directory, folder))
-        print(f"Duplicated folder {folder} has been deleted")
+
+def combine_excel_files(directory, output_filename):
+    excel_files = [os.path.join(dp, f) for dp, dn, filename in os.walk(directory) for f in filename if f.endswith('.xlsx')]
+    df_list = [pd.read_excel(file) for file in excel_files]
+    combined_df = pd.concat(df_list, ignore_index=True)
+    combined_df.to_excel(output_filename, index=False)
+
+def remove_other_excel_files(directory, keep_files):
+    for dp, dn, filenames in os.walk(directory):
+        for file in filenames:
+            if file.endswith('.xlsx') and file != keep_files:
+                os.remove(os.path.join(dp, file))
+
+def add_sheet_excel(directory, excel_name):
+    # Put all the folder names in the directory into a list
+    path = os.path.join(directory, excel_name)
+    folders = [folder for folder in os.listdir(directory) if os.path.isdir(os.path.join(directory, folder)) and '_duplicate' in folder]
+    temp_values = []
+    current_values = []
+    # Extract the temperature and current setting and save them in a dataframe
+    for folder in folders:
+        if 'C' in folder and 'A' in folder:
+            temp_index = folder.index('C')
+            curr_index = folder.index('A')
+            try:
+                temperature = float(folder[:temp_index])
+                current = float(folder[temp_index+1:curr_index])
+                temp_values.append(temperature)
+                current_values.append(current)
+            except ValueError:
+                continue 
+    T = sorted(list(set(temp_values)))
+    I = sorted(list(set(current_values)))
+    df = pd.DataFrame(index=T, columns=I)
+    
+    writer = pd.ExcelWriter(excel_name, engine='openpyxl')
+    writer.book = load_workbook(excel_name)
+
+    df.to_excel(writer, sheet_name='Sheet2')
+    writer.save()
+    writer.close()
+
+    wb = load_workbook(excel_name)
+    ws = wb['Sheet2']
+    cell = ws['A1']
+    cell.value = "T(C) \\ I(A)"
+
+    wb.save(excel_name)
+    wb.close()
+    
 
 def main():
     directory_path = os.getcwd()
     duplicate_and_rename_folder(directory_path)
     read_folder_and_create_excel(directory_path)
     read_and_update_excel(directory_path)
+    combine_excel_files(directory_path, 'Result.xlsx')
+    remove_other_excel_files(directory_path, 'Result.xlsx')
+    # add_sheet_excel(directory_path, 'Result.xlsx')
 
 if __name__ == "__main__":
     main()

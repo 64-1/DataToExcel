@@ -127,34 +127,34 @@ def remove_other_excel_files(directory, keep_files):
 def add_sheet_excel(directory, excel_name):
     # Put all the folder names in the directory into a list
     path = os.path.join(directory, excel_name)
-    folders = [folder for folder in os.listdir(directory) if os.path.isdir(os.path.join(directory, folder)) and '_duplicate' in folder]
+    folders = [folder for folder in os.listdir(directory) if os.path.isdir(os.path.join(directory, folder))]
     temp_values = []
     current_values = []
     # Extract the temperature and current setting and save them in a dataframe
     for folder in folders:
+
         if 'C' in folder and 'A' in folder:
             temp_index = folder.index('C')
             curr_index = folder.index('A')
+
             try:
                 temperature = float(folder[:temp_index])
                 current = float(folder[temp_index+1:curr_index])
                 temp_values.append(temperature)
                 current_values.append(current)
             except ValueError:
-                continue 
+                continue
+
     T = sorted(list(set(temp_values)))
     I = sorted(list(set(current_values)))
     df = pd.DataFrame(index=T, columns=I)
-    
-    writer = pd.ExcelWriter(excel_name, engine='openpyxl')
-    writer.book = load_workbook(excel_name)
 
-    df.to_excel(writer, sheet_name='Sheet2')
-    writer.save()
-    writer.close()
+    
+    with pd.ExcelWriter(path, engine='openpyxl', mode='a') as writer:  
+        df.to_excel(writer, sheet_name='x2')
 
     wb = load_workbook(excel_name)
-    ws = wb['Sheet2']
+    ws = wb['x2']
     cell = ws['A1']
     cell.value = "T(C) \\ I(A)"
 
@@ -169,7 +169,7 @@ def main():
     read_and_update_excel(directory_path)
     combine_excel_files(directory_path, 'Result.xlsx')
     remove_other_excel_files(directory_path, 'Result.xlsx')
-    # add_sheet_excel(directory_path, 'Result.xlsx')
+    add_sheet_excel(directory_path, 'Result.xlsx')
 
 if __name__ == "__main__":
     main()

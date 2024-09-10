@@ -3,9 +3,11 @@ import numpy as np
 import shutil
 import os
 
+from pathlib import Path
+
 def read_folder_and_create_excel(directory):
     # Put all the folder names in the directory into a list
-    folders = [folder for folder in os.listdir(directory) if os.path.isdir(os.path.join(directory, folder)) and '_duplicates' in folder]
+    folders = [folder for folder in os.listdir(directory) if os.path.isdir(os.path.join(directory, folder)) and '_duplicate' in folder]
 
     # Extract the temperature and current setting and save them in a dataframe
     for folder in folders:
@@ -24,7 +26,7 @@ def read_folder_and_create_excel(directory):
             except ValueError:
                 continue
             
-        filenumber = len([name for name in os.listdir('.') if os.path.isfile(name)])
+        filenumber = len([name for name in os.listdir(os.path.join(directory, folder)) if os.path.isfile(os.path.join(directory, folder, name))])
 
         df = pd.DataFrame({
             'Set Temperature (C)': temperatures * filenumber,
@@ -41,7 +43,7 @@ def read_folder_and_create_excel(directory):
             print("Excel file already exists.")
 
 def duplicate_and_rename_folder(directory):
-    folders = [folder for folder in os.listdir(directory) if os.path.isdir(os.path.join(directory, folder)) and 'A' in folder and 'C' in folder and '_duplicates' not in folder]
+    folders = [folder for folder in os.listdir(directory) if os.path.isdir(os.path.join(directory, folder)) and 'A' in folder and 'C' in folder and '_duplicate' not in folder]
     for folder in folders:
         source_folder_path = os.path.join(directory, folder)
         target_folder_path = os.path.join(directory, folder +'_duplicates')
@@ -63,14 +65,13 @@ def read_and_update_excel(directory):
     folders = [folder for folder in os.listdir(directory) if os.path.isdir(os.path.join(directory, folder)) and '_duplicates' in folder]
     for folder in folders:
         folder_path = os.path.join(directory, folder)
-        excel_path = os.path.join(folder_path, f"{folder[:-11]}.xlsx")
+        excel_path = os.path.join(folder_path, f"{folder}.xlsx")
 
         if os.path.exists(excel_path):
             df = pd.read_excel(excel_path)
         else:
-            print(f"Starting a new excel file for {folder[:-11]}.")
-            df = pd.DataFrame()
-
+            read_folder_and_create_excel(directory)
+            df = pd.read_excel(excel_path)
         columns = ['time (s)']
         measurements = ['actual temperature (C)']
         for ch in range(1, 7):
@@ -81,7 +82,7 @@ def read_and_update_excel(directory):
 
         for filename in os.listdir(folder):
             if filename.endswith('.txt'):
-                file_path = os.path.join(folder, folder, filename)
+                file_path = os.path.join(directory, folder, filename)
                 with open(file_path, 'r') as file:
                     lines = [line.strip().split() for line in file.readlines()[:7]]
                     data = np.array(lines, dtype=float)
@@ -95,10 +96,17 @@ def read_and_update_excel(directory):
                     row = [time, temperature] + [val for pair in zip(currents, volatges, resistances) for val in pair]
                     new_data.loc[len(new_data)] = row
         
-        if not df.empty:
+        if 'df' in locals():
             # full_df = pd.concat([df, new_data], axis=1, ignore_index=False)
-            full_df = pd.merge(df, new_data, left_index=True, right_index=True, how='outer')
+            full_df = pd.merge(df, new_data, left_index=True, right_index=True)
             full_df.to_excel(excel_path, index=False)
+            path = Path(excel_path)
+            new_file_name = path.stem.replace('_duplicates', '') + path.suffix
+            # Define the destination path (moving the file to its parent directory)
+            destination_path = path.parent.parent / new_file_name
+
+            # Move the file to its parent directory
+            shutil.move(str(path), str(destination_path))
             print("Excel file has been updated successfully!")
         else:
             new_data.to_excel(excel_path, index=False)

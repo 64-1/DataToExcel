@@ -1,90 +1,53 @@
-import pandas as pd
-import os
 from openpyxl import load_workbook
-from openpyxl.styles import Alignment
+import os
 
 def update_resistance_values(directory, excel_name, target_time=3600, tolerance=10):
     path = os.path.join(directory, excel_name)
     wb = load_workbook(path)
     ws = wb.active  # assuming the data is in the active sheet
 
-    # Dynamically find the time column
-    time_col_index = None
-    for col in ws.iter_cols(min_row=1, max_row=1, values_only=True):
-        if "time" in col.value.lower():
-            time_col_index = col.column
-            break
+    # Initialize column indices
+    col_indices = {
+        "time": None,
+        "Set Temperature": None,
+        "Set Current": None,
+        "CH1 resistance": None,
+        "CH2 resistance": None,
+        "CH3 resistance": None,
+        "CH4 resistance": None,
+        "CH5 resistance": None,
+        "CH6 resistance": None
+    }
 
-    # Assuming temperature and current are immediately after time in the next two columns
-    temp_col_index = None
-    for col in ws.iter_cols(min_row=1, max_row=1, values_only=True):
-        if "Set Temperature" in col.value:
-            temp_col_index = col.column
-            break
-    current_col_index = None
-    for col in ws.iter_cols(min_row=1, max_row=1, values_only=True):
-        if "Set Current" in col.value:
-            current_col_index = col.column
-            break
-    CH1resistance_col_index = None
-    for col in ws.iter_cols(min_row=1, max_row=1, values_only=True):
-        if "CH1 resistance" in col.value:
-            CH1resistance_col_index = col.column
-            break
-    CH2resistance_col_index = None
-    for col in ws.iter_cols(min_row=1, max_row=1, values_only=True):
-        if "CH2 resistance" in col.value:
-            CH2resistance_col_index = col.column
-            break
-    CH3resistance_col_index = None
-    for col in ws.iter_cols(min_row=1, max_row=1, values_only=True):
-        if "CH3 resistance" in col.value:
-            CH3resistance_col_index = col.column
-            break
+    # Single pass to find all relevant columns
+    for cell in ws[1]:  # ws[1] accesses the first row
+        for key in col_indices:
+            if cell.value and key.lower() in cell.value.lower():
+                col_indices[key] = cell.column - 1  # Store 0-based index for later use
 
-    CH4resistance_col_index = None
-    for col in ws.iter_cols(min_row=1, max_row=1, values_only=True):
-        if "CH4 resistance" in col.value:
-            CH4resistance_col_index = col.column
-            break
-    
-    CH5resistance_col_index = None
-    for col in ws.iter_cols(min_row=1, max_row=1, values_only=True):
-        if "CH5 resistance" in col.value:
-            CH5resistance_col_index = col.column
-            break
-    
-    CH6resistance_col_index = None
-    for col in ws.iter_cols(min_row=1, max_row=1, values_only=True):
-        if "CH6 resistance" in col.value:
-            CH6resistance_col_index = col.column
-            break
-    
-    CHValues = []
-    # Find the row where time is approximately 3600 and retrieve temperature and current
+    # Check if all necessary columns were found
+    if None in col_indices.values():
+        missing_cols = [k for k, v in col_indices.items() if v is None]
+        print(f"Missing columns: {', '.join(missing_cols)}")
+        return
+
+    # Find the row where time is approximately 3600 and retrieve relevant data
     for row in ws.iter_rows(min_row=2):  # Skipping the header row
-        time_value = row[time_col_index - 1].value  # Adjusting index for 0-based list access
+        time_value = row[col_indices["time"]].value
         if target_time - tolerance <= time_value <= target_time + tolerance:
-            set_temp = row[temp_col_index - 1].value
-            set_current = row[current_col_index - 1].value
-            set_CH1 = row[CH1resistance_col_index-1].value
-            set_CH2 = row[CH2resistance_col_index-1].value
-            set_CH3 = row[CH3resistance_col_index-1].value
-            set_CH4 = row[CH4resistance_col_index-1].value
-            set_CH5 = row[CH5resistance_col_index-1].value
-            set_CH6 = row[CH6resistance_col_index-1].value
-            CHValues.append(set_CH1)
-            CHValues.append(set_CH2)
-            CHValues.append(set_CH3)
-            CHValues.append(set_CH4)
-            CHValues.append(set_CH5)
-            CHValues.append(set_CH6)
-            # update_sheet2(wb, set_temp, set_current)
+            values = {
+                "Set Temperature": row[col_indices["Set Temperature"]].value,
+                "Set Current": row[col_indices["Set Current"]].value,
+                "Resistances": [row[col_indices[f"CH{i} resistance"]].value for i in range(1, 7)]
+            }
+            # Here you would call your function to update sheet2
+            print("Values found:", values)  # Replace this with your update function
             break
 
     wb.save(path)
     wb.close()
 
+# Example usage:
 directory = os.getcwd()
 excel_name = 'Result.xlsx'
 update_resistance_values(directory, excel_name)

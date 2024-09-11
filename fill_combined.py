@@ -42,6 +42,7 @@ def update_resistance_values(directory, excel_name, target_time=3600, tolerance=
                     "Set Current": row[col_indices["Set Current"]].value,
                     "Resistance": row[col_indices[f"CH{i} resistance"]].value
                 }
+                print(data)
                 fill_sheet2(directory, excel_name, data)
 
     wb.save(path)
@@ -52,14 +53,26 @@ def fill_sheet2(directory, excel_name, data):
     wb = load_workbook(path)
     ws = wb['Sheet2']  # Directly access 'Sheet2'
 
+    print(f"Attempting to fill data for: {data}")  # Debug information
+
     # Find the correct row and column based on the Channel, Temperature, and Current
+    found = False
     for row in range(2, ws.max_row + 1):
-        if ws.cell(row=row, column=1).value == data["Channel"] and ws.cell(row=row, column=2).value == data["Set Temperature"]:
-            # Find the correct column for the current
+        channel = ws.cell(row=row, column=1).value
+        temperature = ws.cell(row=row, column=2).value
+        if channel == data["Channel"] and temperature == data["Set Temperature"]:
             for col in range(3, ws.max_column + 1):
-                if ws.cell(row=1, column=col).value == data["Set Current"]:
+                current = ws.cell(row=1, column=col).value
+                if current == data["Set Current"]:
                     ws.cell(row=row, column=col, value=data["Resistance"])
+                    print(f"Data filled at Row: {row}, Column: {col}")  # Confirm data placement
+                    found = True
                     break
+        if found:
+            break
+
+    if not found:
+        print("No matching row and column found for the data provided.")  # Debug if no place found
 
     wb.save(path)
     wb.close()

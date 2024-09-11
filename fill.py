@@ -31,7 +31,7 @@ def update_resistance_values(directory, excel_name, target_time=3600, tolerance=
         print(f"Missing columns: {', '.join(missing_cols)}")
         return
 
-    # Find the row where time is approximately 3600 and retrieve relevant data
+    # Process all rows where time is approximately 3600 and retrieve relevant data
     for row in ws.iter_rows(min_row=2):  # Skipping the header row
         time_value = row[col_indices["time"]].value
         if target_time - tolerance <= time_value <= target_time + tolerance:
@@ -41,9 +41,8 @@ def update_resistance_values(directory, excel_name, target_time=3600, tolerance=
                 "Resistances": [row[col_indices[f"CH{i} resistance"]].value for i in range(1, 7)]
             }
             # Here you would call your function to update sheet2
-            print("Values found:", values)  # Replace this with your update function
-            break
-
+            print("Values found:", values)  # Replace this print statement with your update function
+            
     wb.save(path)
     wb.close()
 

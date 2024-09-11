@@ -1,0 +1,271 @@
+(excel) PS C:\Users\siyiliu2\Desktop\project\Converter> python test.py
+{'Channel': 'CH1', 'Set Temperature': 50, 'Set Current': 0.3, 'Resistance': 0.003404449643632227}
+Attempting to fill data for: {'Channel': 'CH1', 'Set Temperature': 50, 'Set Current': 0.3, 'Resistance': 0.003404449643632227}
+Data filled at Row: 2, Column: 3
+{'Channel': 'CH2', 'Set Temperature': 50, 'Set Current': 0.3, 'Resistance': 0.007076279909283607}
+Attempting to fill data for: {'Channel': 'CH2', 'Set Temperature': 50, 'Set Current': 0.3, 'Resistance': 0.007076279909283607}
+Data filled at Row: 6, Column: 3
+{'Channel': 'CH3', 'Set Temperature': 50, 'Set Current': 0.3, 'Resistance': 0.004632218824356949}
+Attempting to fill data for: {'Channel': 'CH3', 'Set Temperature': 50, 'Set Current': 0.3, 'Resistance': 0.004632218824356949}
+Data filled at Row: 10, Column: 3
+{'Channel': 'CH4', 'Set Temperature': 50, 'Set Current': 0.3, 'Resistance': 0.006056442425595581}
+Attempting to fill data for: {'Channel': 'CH4', 'Set Temperature': 50, 'Set Current': 0.3, 'Resistance': 0.006056442425595581}
+Data filled at Row: 14, Column: 3
+{'Channel': 'CH5', 'Set Temperature': 50, 'Set Current': 0.3, 'Resistance': 0.007015825230182325}
+Attempting to fill data for: {'Channel': 'CH5', 'Set Temperature': 50, 'Set Current': 0.3, 'Resistance': 0.007015825230182325}
+Data filled at Row: 18, Column: 3
+{'Channel': 'CH6', 'Set Temperature': 50, 'Set Current': 0.3, 'Resistance': 0.004530049599621916}
+Attempting to fill data for: {'Channel': 'CH6', 'Set Temperature': 50, 'Set Current': 0.3, 'Resistance': 0.004530049599621916}
+Data filled at Row: 22, Column: 3
+{'Channel': 'CH1', 'Set Temperature': 50, 'Set Current': 1, 'Resistance': 0.00342431445224666}
+Attempting to fill data for: {'Channel': 'CH1', 'Set Temperature': 50, 'Set Current': 1, 'Resistance': 0.00342431445224666}
+Data filled at Row: 2, Column: 4
+{'Channel': 'CH2', 'Set Temperature': 50, 'Set Current': 1, 'Resistance': 0.007123241926966221}
+Attempting to fill data for: {'Channel': 'CH2', 'Set Temperature': 50, 'Set Current': 1, 'Resistance': 0.007123241926966221}
+Data filled at Row: 6, Column: 4
+{'Channel': 'CH3', 'Set Temperature': 50, 'Set Current': 1, 'Resistance': 0.004660059056176953}
+Attempting to fill data for: {'Channel': 'CH3', 'Set Temperature': 50, 'Set Current': 1, 'Resistance': 0.004660059056176953}
+Data filled at Row: 10, Column: 4
+{'Channel': 'CH4', 'Set Temperature': 50, 'Set Current': 1, 'Resistance': 0.0060944923981133}
+Attempting to fill data for: {'Channel': 'CH4', 'Set Temperature': 50, 'Set Current': 1, 'Resistance': 0.0060944923981133}
+Data filled at Row: 14, Column: 4
+{'Channel': 'CH5', 'Set Temperature': 50, 'Set Current': 1, 'Resistance': 0.007057151065106076}
+Attempting to fill data for: {'Channel': 'CH5', 'Set Temperature': 50, 'Set Current': 1, 'Resistance': 0.007057151065106076}
+Data filled at Row: 18, Column: 4
+{'Channel': 'CH6', 'Set Temperature': 50, 'Set Current': 1, 'Resistance': 0.004556118391627181}
+Attempting to fill data for: {'Channel': 'CH6', 'Set Temperature': 50, 'Set Current': 1, 'Resistance': 0.004556118391627181}
+Data filled at Row: 22, Column: 4
+{'Channel': 'CH1', 'Set Temperature': 50, 'Set Current': 2, 'Resistance': 0.0034900956631383}
+Attempting to fill data for: {'Channel': 'CH1', 'Set Temperature': 50, 'Set Current': 2, 'Resistance': 0.0034900956631383}
+Data filled at Row: 2, Column: 5
+{'Channel': 'CH2', 'Set Temperature': 50, 'Set Current': 2, 'Resistance': 0.007272892569268019}
+Attempting to fill data for: {'Channel': 'CH2', 'Set Temperature': 50, 'Set Current': 2, 'Resistance': 0.007272892569268019}
+Data filled at Row: 6, Column: 5
+{'Channel': 'CH3', 'Set Temperature': 50, 'Set Current': 2, 'Resistance': 0.00475291177706182}
+Attempting to fill data for: {'Channel': 'CH3', 'Set Temperature': 50, 'Set Current': 2, 'Resistance': 0.00475291177706182}
+Data filled at Row: 10, Column: 5
+{'Channel': 'CH4', 'Set Temperature': 50, 'Set Current': 2, 'Resistance': 0.006214121988791453}
+Attempting to fill data for: {'Channel': 'CH4', 'Set Temperature': 50, 'Set Current': 2, 'Resistance': 0.006214121988791453}
+Data filled at Row: 14, Column: 5
+{'Channel': 'CH5', 'Set Temperature': 50, 'Set Current': 2, 'Resistance': 0.007200651813356368}
+Attempting to fill data for: {'Channel': 'CH5', 'Set Temperature': 50, 'Set Current': 2, 'Resistance': 0.007200651813356368}
+Data filled at Row: 18, Column: 5
+{'Channel': 'CH6', 'Set Temperature': 50, 'Set Current': 2, 'Resistance': 0.004642868939672232}
+Attempting to fill data for: {'Channel': 'CH6', 'Set Temperature': 50, 'Set Current': 2, 'Resistance': 0.004642868939672232}
+Data filled at Row: 22, Column: 5
+{'Channel': 'CH1', 'Set Temperature': 60, 'Set Current': 0.3, 'Resistance': 0.00352257243173884}
+Attempting to fill data for: {'Channel': 'CH1', 'Set Temperature': 60, 'Set Current': 0.3, 'Resistance': 0.00352257243173884}
+No matching row and column found for the data provided.
+{'Channel': 'CH2', 'Set Temperature': 60, 'Set Current': 0.3, 'Resistance': 0.007323946366128525}
+Attempting to fill data for: {'Channel': 'CH2', 'Set Temperature': 60, 'Set Current': 0.3, 'Resistance': 0.007323946366128525}
+No matching row and column found for the data provided.
+{'Channel': 'CH3', 'Set Temperature': 60, 'Set Current': 0.3, 'Resistance': 0.00479041124525414}
+Attempting to fill data for: {'Channel': 'CH3', 'Set Temperature': 60, 'Set Current': 0.3, 'Resistance': 0.00479041124525414}
+No matching row and column found for the data provided.
+{'Channel': 'CH4', 'Set Temperature': 60, 'Set Current': 0.3, 'Resistance': 0.006268291070905424}
+Attempting to fill data for: {'Channel': 'CH4', 'Set Temperature': 60, 'Set Current': 0.3, 'Resistance': 0.006268291070905424}
+No matching row and column found for the data provided.
+{'Channel': 'CH5', 'Set Temperature': 60, 'Set Current': 0.3, 'Resistance': 0.007259631042162336}
+Attempting to fill data for: {'Channel': 'CH5', 'Set Temperature': 60, 'Set Current': 0.3, 'Resistance': 0.007259631042162336}
+No matching row and column found for the data provided.
+{'Channel': 'CH6', 'Set Temperature': 60, 'Set Current': 0.3, 'Resistance': 0.004688395354029757}
+Attempting to fill data for: {'Channel': 'CH6', 'Set Temperature': 60, 'Set Current': 0.3, 'Resistance': 0.004688395354029757}
+No matching row and column found for the data provided.
+{'Channel': 'CH1', 'Set Temperature': 60, 'Set Current': 1, 'Resistance': 0.003545448610464589}
+Attempting to fill data for: {'Channel': 'CH1', 'Set Temperature': 60, 'Set Current': 1, 'Resistance': 0.003545448610464589}
+No matching row and column found for the data provided.
+{'Channel': 'CH2', 'Set Temperature': 60, 'Set Current': 1, 'Resistance': 0.007371130133649582}
+Attempting to fill data for: {'Channel': 'CH2', 'Set Temperature': 60, 'Set Current': 1, 'Resistance': 0.007371130133649582}
+No matching row and column found for the data provided.
+{'Channel': 'CH3', 'Set Temperature': 60, 'Set Current': 1, 'Resistance': 0.004823266042286264}
+Attempting to fill data for: {'Channel': 'CH3', 'Set Temperature': 60, 'Set Current': 1, 'Resistance': 0.004823266042286264}
+No matching row and column found for the data provided.
+{'Channel': 'CH4', 'Set Temperature': 60, 'Set Current': 1, 'Resistance': 0.006307235548206874}
+Attempting to fill data for: {'Channel': 'CH4', 'Set Temperature': 60, 'Set Current': 1, 'Resistance': 0.006307235548206874}
+No matching row and column found for the data provided.
+{'Channel': 'CH5', 'Set Temperature': 60, 'Set Current': 1, 'Resistance': 0.007304505090398481}
+Attempting to fill data for: {'Channel': 'CH5', 'Set Temperature': 60, 'Set Current': 1, 'Resistance': 0.007304505090398481}
+No matching row and column found for the data provided.
+{'Channel': 'CH6', 'Set Temperature': 60, 'Set Current': 1, 'Resistance': 0.00471537774599393}
+Attempting to fill data for: {'Channel': 'CH6', 'Set Temperature': 60, 'Set Current': 1, 'Resistance': 0.00471537774599393}
+No matching row and column found for the data provided.
+{'Channel': 'CH1', 'Set Temperature': 60, 'Set Current': 2, 'Resistance': 0.003613418493516435}
+Attempting to fill data for: {'Channel': 'CH1', 'Set Temperature': 60, 'Set Current': 2, 'Resistance': 0.003613418493516435}
+No matching row and column found for the data provided.
+{'Channel': 'CH2', 'Set Temperature': 60, 'Set Current': 2, 'Resistance': 0.007527665837933888}
+Attempting to fill data for: {'Channel': 'CH2', 'Set Temperature': 60, 'Set Current': 2, 'Resistance': 0.007527665837933888}
+No matching row and column found for the data provided.
+{'Channel': 'CH3', 'Set Temperature': 60, 'Set Current': 2, 'Resistance': 0.004920428227237719}
+Attempting to fill data for: {'Channel': 'CH3', 'Set Temperature': 60, 'Set Current': 2, 'Resistance': 0.004920428227237719}
+No matching row and column found for the data provided.
+{'Channel': 'CH4', 'Set Temperature': 60, 'Set Current': 2, 'Resistance': 0.006432765826005524}
+Attempting to fill data for: {'Channel': 'CH4', 'Set Temperature': 60, 'Set Current': 2, 'Resistance': 0.006432765826005524}
+No matching row and column found for the data provided.
+{'Channel': 'CH5', 'Set Temperature': 60, 'Set Current': 2, 'Resistance': 0.007452703051675617}
+Attempting to fill data for: {'Channel': 'CH5', 'Set Temperature': 60, 'Set Current': 2, 'Resistance': 0.007452703051675617}
+No matching row and column found for the data provided.
+{'Channel': 'CH6', 'Set Temperature': 60, 'Set Current': 2, 'Resistance': 0.004806459662318225}
+Attempting to fill data for: {'Channel': 'CH6', 'Set Temperature': 60, 'Set Current': 2, 'Resistance': 0.004806459662318225}
+No matching row and column found for the data provided.
+{'Channel': 'CH1', 'Set Temperature': 60, 'Set Current': 4, 'Resistance': 0.00394805395505771}
+Attempting to fill data for: {'Channel': 'CH1', 'Set Temperature': 60, 'Set Current': 4, 'Resistance': 0.00394805395505771}
+No matching row and column found for the data provided.
+{'Channel': 'CH2', 'Set Temperature': 60, 'Set Current': 4, 'Resistance': 0.008288832520976655}
+Attempting to fill data for: {'Channel': 'CH2', 'Set Temperature': 60, 'Set Current': 4, 'Resistance': 0.008288832520976655}
+No matching row and column found for the data provided.
+{'Channel': 'CH3', 'Set Temperature': 60, 'Set Current': 4, 'Resistance': 0.005395707442038837}
+Attempting to fill data for: {'Channel': 'CH3', 'Set Temperature': 60, 'Set Current': 4, 'Resistance': 0.005395707442038837}
+No matching row and column found for the data provided.
+{'Channel': 'CH4', 'Set Temperature': 60, 'Set Current': 4, 'Resistance': 0.007032288784087806}
+Attempting to fill data for: {'Channel': 'CH4', 'Set Temperature': 60, 'Set Current': 4, 'Resistance': 0.007032288784087806}
+No matching row and column found for the data provided.
+{'Channel': 'CH5', 'Set Temperature': 60, 'Set Current': 4, 'Resistance': 0.008162615399737899}
+Attempting to fill data for: {'Channel': 'CH5', 'Set Temperature': 60, 'Set Current': 4, 'Resistance': 0.008162615399737899}
+No matching row and column found for the data provided.
+{'Channel': 'CH6', 'Set Temperature': 60, 'Set Current': 4, 'Resistance': 0.005241264247436512}
+Attempting to fill data for: {'Channel': 'CH6', 'Set Temperature': 60, 'Set Current': 4, 'Resistance': 0.005241264247436512}
+No matching row and column found for the data provided.
+{'Channel': 'CH1', 'Set Temperature': 85, 'Set Current': 0.3, 'Resistance': 0.003820577845355192}
+Attempting to fill data for: {'Channel': 'CH1', 'Set Temperature': 85, 'Set Current': 0.3, 'Resistance': 0.003820577845355192}
+No matching row and column found for the data provided.
+{'Channel': 'CH2', 'Set Temperature': 85, 'Set Current': 0.3, 'Resistance': 0.007940012584846739}
+Attempting to fill data for: {'Channel': 'CH2', 'Set Temperature': 85, 'Set Current': 0.3, 'Resistance': 0.007940012584846739}
+No matching row and column found for the data provided.
+{'Channel': 'CH3', 'Set Temperature': 85, 'Set Current': 0.3, 'Resistance': 0.005198377415727232}
+Attempting to fill data for: {'Channel': 'CH3', 'Set Temperature': 85, 'Set Current': 0.3, 'Resistance': 0.005198377415727232}
+No matching row and column found for the data provided.
+{'Channel': 'CH4', 'Set Temperature': 85, 'Set Current': 0.3, 'Resistance': 0.006796981179144368}
+Attempting to fill data for: {'Channel': 'CH4', 'Set Temperature': 85, 'Set Current': 0.3, 'Resistance': 0.006796981179144368}
+No matching row and column found for the data provided.
+{'Channel': 'CH5', 'Set Temperature': 85, 'Set Current': 0.3, 'Resistance': 0.007870043683661437}
+Attempting to fill data for: {'Channel': 'CH5', 'Set Temperature': 85, 'Set Current': 0.3, 'Resistance': 0.007870043683661437}
+No matching row and column found for the data provided.
+{'Channel': 'CH6', 'Set Temperature': 85, 'Set Current': 0.3, 'Resistance': 0.005083390973390806}
+Attempting to fill data for: {'Channel': 'CH6', 'Set Temperature': 85, 'Set Current': 0.3, 'Resistance': 0.005083390973390806}
+No matching row and column found for the data provided.
+{'Channel': 'CH1', 'Set Temperature': 85, 'Set Current': 1, 'Resistance': 0.003844600020475675}
+Attempting to fill data for: {'Channel': 'CH1', 'Set Temperature': 85, 'Set Current': 1, 'Resistance': 0.003844600020475675}
+No matching row and column found for the data provided.
+{'Channel': 'CH2', 'Set Temperature': 85, 'Set Current': 1, 'Resistance': 0.007992929893206555}
+Attempting to fill data for: {'Channel': 'CH2', 'Set Temperature': 85, 'Set Current': 1, 'Resistance': 0.007992929893206555}
+No matching row and column found for the data provided.
+{'Channel': 'CH3', 'Set Temperature': 85, 'Set Current': 1, 'Resistance': 0.005231008211065822}
+Attempting to fill data for: {'Channel': 'CH3', 'Set Temperature': 85, 'Set Current': 1, 'Resistance': 0.005231008211065822}
+No matching row and column found for the data provided.
+{'Channel': 'CH4', 'Set Temperature': 85, 'Set Current': 1, 'Resistance': 0.006838853116911621}
+Attempting to fill data for: {'Channel': 'CH4', 'Set Temperature': 85, 'Set Current': 1, 'Resistance': 0.006838853116911621}
+No matching row and column found for the data provided.
+{'Channel': 'CH5', 'Set Temperature': 85, 'Set Current': 1, 'Resistance': 0.007919295819503252}
+Attempting to fill data for: {'Channel': 'CH5', 'Set Temperature': 85, 'Set Current': 1, 'Resistance': 0.007919295819503252}
+No matching row and column found for the data provided.
+{'Channel': 'CH6', 'Set Temperature': 85, 'Set Current': 1, 'Resistance': 0.005113982868447615}
+Attempting to fill data for: {'Channel': 'CH6', 'Set Temperature': 85, 'Set Current': 1, 'Resistance': 0.005113982868447615}
+No matching row and column found for the data provided.
+{'Channel': 'CH1', 'Set Temperature': 85, 'Set Current': 2, 'Resistance': 0.003917999384621067}
+Attempting to fill data for: {'Channel': 'CH1', 'Set Temperature': 85, 'Set Current': 2, 'Resistance': 0.003917999384621067}
+No matching row and column found for the data provided.
+{'Channel': 'CH2', 'Set Temperature': 85, 'Set Current': 2, 'Resistance': 0.008161210315108452}
+Attempting to fill data for: {'Channel': 'CH2', 'Set Temperature': 85, 'Set Current': 2, 'Resistance': 0.008161210315108452}
+No matching row and column found for the data provided.
+{'Channel': 'CH3', 'Set Temperature': 85, 'Set Current': 2, 'Resistance': 0.005335508537322134}
+Attempting to fill data for: {'Channel': 'CH3', 'Set Temperature': 85, 'Set Current': 2, 'Resistance': 0.005335508537322134}
+No matching row and column found for the data provided.
+{'Channel': 'CH4', 'Set Temperature': 85, 'Set Current': 2, 'Resistance': 0.006972929413317237}
+Attempting to fill data for: {'Channel': 'CH4', 'Set Temperature': 85, 'Set Current': 2, 'Resistance': 0.006972929413317237}
+No matching row and column found for the data provided.
+{'Channel': 'CH5', 'Set Temperature': 85, 'Set Current': 2, 'Resistance': 0.008079459079695435}
+Attempting to fill data for: {'Channel': 'CH5', 'Set Temperature': 85, 'Set Current': 2, 'Resistance': 0.008079459079695435}
+No matching row and column found for the data provided.
+{'Channel': 'CH6', 'Set Temperature': 85, 'Set Current': 2, 'Resistance': 0.005211798181582248}
+Attempting to fill data for: {'Channel': 'CH6', 'Set Temperature': 85, 'Set Current': 2, 'Resistance': 0.005211798181582248}
+No matching row and column found for the data provided.
+{'Channel': 'CH1', 'Set Temperature': 85, 'Set Current': 4, 'Resistance': 0.004251340408601557}
+Attempting to fill data for: {'Channel': 'CH1', 'Set Temperature': 85, 'Set Current': 4, 'Resistance': 0.004251340408601557}
+No matching row and column found for the data provided.
+{'Channel': 'CH2', 'Set Temperature': 85, 'Set Current': 4, 'Resistance': 0.008922641735190638}
+Attempting to fill data for: {'Channel': 'CH2', 'Set Temperature': 85, 'Set Current': 4, 'Resistance': 0.008922641735190638}
+No matching row and column found for the data provided.
+{'Channel': 'CH3', 'Set Temperature': 85, 'Set Current': 4, 'Resistance': 0.005808387023637744}
+Attempting to fill data for: {'Channel': 'CH3', 'Set Temperature': 85, 'Set Current': 4, 'Resistance': 0.005808387023637744}
+No matching row and column found for the data provided.
+{'Channel': 'CH4', 'Set Temperature': 85, 'Set Current': 4, 'Resistance': 0.007570148504617888}
+Attempting to fill data for: {'Channel': 'CH4', 'Set Temperature': 85, 'Set Current': 4, 'Resistance': 0.007570148504617888}
+No matching row and column found for the data provided.
+{'Channel': 'CH5', 'Set Temperature': 85, 'Set Current': 4, 'Resistance': 0.00878630488724981}
+Attempting to fill data for: {'Channel': 'CH5', 'Set Temperature': 85, 'Set Current': 4, 'Resistance': 0.00878630488724981}
+No matching row and column found for the data provided.
+{'Channel': 'CH6', 'Set Temperature': 85, 'Set Current': 4, 'Resistance': 0.005643121968437783}
+Attempting to fill data for: {'Channel': 'CH6', 'Set Temperature': 85, 'Set Current': 4, 'Resistance': 0.005643121968437783}
+No matching row and column found for the data provided.
+{'Channel': 'CH1', 'Set Temperature': 105, 'Set Current': 0.3, 'Resistance': 0.004057366610851611}
+Attempting to fill data for: {'Channel': 'CH1', 'Set Temperature': 105, 'Set Current': 0.3, 'Resistance': 0.004057366610851611}
+No matching row and column found for the data provided.
+{'Channel': 'CH2', 'Set Temperature': 105, 'Set Current': 0.3, 'Resistance': 0.008434009026334848}
+Attempting to fill data for: {'Channel': 'CH2', 'Set Temperature': 105, 'Set Current': 0.3, 'Resistance': 0.008434009026334848}
+No matching row and column found for the data provided.
+{'Channel': 'CH3', 'Set Temperature': 105, 'Set Current': 0.3, 'Resistance': 0.005525441421892869}
+Attempting to fill data for: {'Channel': 'CH3', 'Set Temperature': 105, 'Set Current': 0.3, 'Resistance': 0.005525441421892869}
+No matching row and column found for the data provided.
+{'Channel': 'CH4', 'Set Temperature': 105, 'Set Current': 0.3, 'Resistance': 0.007219718619002475}
+Attempting to fill data for: {'Channel': 'CH4', 'Set Temperature': 105, 'Set Current': 0.3, 'Resistance': 0.007219718619002475}
+No matching row and column found for the data provided.
+{'Channel': 'CH5', 'Set Temperature': 105, 'Set Current': 0.3, 'Resistance': 0.00835675032427484}
+Attempting to fill data for: {'Channel': 'CH5', 'Set Temperature': 105, 'Set Current': 0.3, 'Resistance': 0.00835675032427484}
+No matching row and column found for the data provided.
+{'Channel': 'CH6', 'Set Temperature': 105, 'Set Current': 0.3, 'Resistance': 0.005402249186350162}
+Attempting to fill data for: {'Channel': 'CH6', 'Set Temperature': 105, 'Set Current': 0.3, 'Resistance': 0.005402249186350162}
+No matching row and column found for the data provided.
+{'Channel': 'CH1', 'Set Temperature': 105, 'Set Current': 1, 'Resistance': 0.0040839785405618}
+Attempting to fill data for: {'Channel': 'CH1', 'Set Temperature': 105, 'Set Current': 1, 'Resistance': 0.0040839785405618}
+No matching row and column found for the data provided.
+{'Channel': 'CH2', 'Set Temperature': 105, 'Set Current': 1, 'Resistance': 0.008488116069976197}
+Attempting to fill data for: {'Channel': 'CH2', 'Set Temperature': 105, 'Set Current': 1, 'Resistance': 0.008488116069976197}
+No matching row and column found for the data provided.
+{'Channel': 'CH3', 'Set Temperature': 105, 'Set Current': 1, 'Resistance': 0.005556557055395893}
+Attempting to fill data for: {'Channel': 'CH3', 'Set Temperature': 105, 'Set Current': 1, 'Resistance': 0.005556557055395893}
+No matching row and column found for the data provided.
+{'Channel': 'CH4', 'Set Temperature': 105, 'Set Current': 1, 'Resistance': 0.007261091415100882}
+Attempting to fill data for: {'Channel': 'CH4', 'Set Temperature': 105, 'Set Current': 1, 'Resistance': 0.007261091415100882}
+No matching row and column found for the data provided.
+{'Channel': 'CH5', 'Set Temperature': 105, 'Set Current': 1, 'Resistance': 0.008408161210708887}
+Attempting to fill data for: {'Channel': 'CH5', 'Set Temperature': 105, 'Set Current': 1, 'Resistance': 0.008408161210708887}
+No matching row and column found for the data provided.
+{'Channel': 'CH6', 'Set Temperature': 105, 'Set Current': 1, 'Resistance': 0.005431222448599295}
+Attempting to fill data for: {'Channel': 'CH6', 'Set Temperature': 105, 'Set Current': 1, 'Resistance': 0.005431222448599295}
+No matching row and column found for the data provided.
+{'Channel': 'CH1', 'Set Temperature': 105, 'Set Current': 2, 'Resistance': 0.004161539376005208}
+Attempting to fill data for: {'Channel': 'CH1', 'Set Temperature': 105, 'Set Current': 2, 'Resistance': 0.004161539376005208}
+No matching row and column found for the data provided.
+{'Channel': 'CH2', 'Set Temperature': 105, 'Set Current': 2, 'Resistance': 0.008667020214406441}
+Attempting to fill data for: {'Channel': 'CH2', 'Set Temperature': 105, 'Set Current': 2, 'Resistance': 0.008667020214406441}
+No matching row and column found for the data provided.
+{'Channel': 'CH3', 'Set Temperature': 105, 'Set Current': 2, 'Resistance': 0.005666722962805919}
+Attempting to fill data for: {'Channel': 'CH3', 'Set Temperature': 105, 'Set Current': 2, 'Resistance': 0.005666722962805919}
+No matching row and column found for the data provided.
+{'Channel': 'CH4', 'Set Temperature': 105, 'Set Current': 2, 'Resistance': 0.007405667631736067}
+Attempting to fill data for: {'Channel': 'CH4', 'Set Temperature': 105, 'Set Current': 2, 'Resistance': 0.007405667631736067}
+No matching row and column found for the data provided.
+{'Channel': 'CH5', 'Set Temperature': 105, 'Set Current': 2, 'Resistance': 0.008579714214932657}
+Attempting to fill data for: {'Channel': 'CH5', 'Set Temperature': 105, 'Set Current': 2, 'Resistance': 0.008579714214932657}
+No matching row and column found for the data provided.
+{'Channel': 'CH6', 'Set Temperature': 105, 'Set Current': 2, 'Resistance': 0.005535981401503197}
+Attempting to fill data for: {'Channel': 'CH6', 'Set Temperature': 105, 'Set Current': 2, 'Resistance': 0.005535981401503197}
+No matching row and column found for the data provided.
+{'Channel': 'CH1', 'Set Temperature': 105, 'Set Current': 4, 'Resistance': 0.004511016377968517}
+Attempting to fill data for: {'Channel': 'CH1', 'Set Temperature': 105, 'Set Current': 4, 'Resistance': 0.004511016377968517}
+No matching row and column found for the data provided.
+{'Channel': 'CH2', 'Set Temperature': 105, 'Set Current': 4, 'Resistance': 0.009465305744000634}
+Attempting to fill data for: {'Channel': 'CH2', 'Set Temperature': 105, 'Set Current': 4, 'Resistance': 0.009465305744000634}
+No matching row and column found for the data provided.
+{'Channel': 'CH3', 'Set Temperature': 105, 'Set Current': 4, 'Resistance': 0.006161395424930807}
+Attempting to fill data for: {'Channel': 'CH3', 'Set Temperature': 105, 'Set Current': 4, 'Resistance': 0.006161395424930807}
+No matching row and column found for the data provided.
+{'Channel': 'CH4', 'Set Temperature': 105, 'Set Current': 4, 'Resistance': 0.008034393707931896}
+Attempting to fill data for: {'Channel': 'CH4', 'Set Temperature': 105, 'Set Current': 4, 'Resistance': 0.008034393707931896}
+No matching row and column found for the data provided.
+{'Channel': 'CH5', 'Set Temperature': 105, 'Set Current': 4, 'Resistance': 0.009324278685427767}
+Attempting to fill data for: {'Channel': 'CH5', 'Set Temperature': 105, 'Set Current': 4, 'Resistance': 0.009324278685427767}
+No matching row and column found for the data provided.
+{'Channel': 'CH6', 'Set Temperature': 105, 'Set Current': 4, 'Resistance': 0.005990295801661699}
+Attempting to fill data for: {'Channel': 'CH6', 'Set Temperature': 105, 'Set Current': 4, 'Resistance': 0.005990295801661699}
+No matching row and column found for the data provided.

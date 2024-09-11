@@ -35,43 +35,34 @@ def update_resistance_values(directory, excel_name, target_time=3600, tolerance=
     for row in ws.iter_rows(min_row=2):  # Skipping the header row
         time_value = row[col_indices["time"]].value
         if target_time - tolerance <= time_value <= target_time + tolerance:
-            values = {
-                "Set Temperature": row[col_indices["Set Temperature"]].value,
-                "Set Current": row[col_indices["Set Current"]].value,
-                "Resistances": [row[col_indices[f"CH{i} resistance"]].value for i in range(1, 7)]
-            }
-            # Here you would call your function to update sheet2
-            #print("Values found:", values)  # Replace this print statement with your update function
-            fill_sheet2( directory, excel_name, values)
-            
+            for i in range(1, 7):  # For each channel
+                data = {
+                    "Channel": f"CH{i}",
+                    "Set Temperature": row[col_indices["Set Temperature"]].value,
+                    "Set Current": row[col_indices["Set Current"]].value,
+                    "Resistance": row[col_indices[f"CH{i} resistance"]].value
+                }
+                fill_sheet2(directory, excel_name, data)
+
     wb.save(path)
     wb.close()
 
 def fill_sheet2(directory, excel_name, data):
     path = os.path.join(directory, excel_name)
     wb = load_workbook(path)
-    ws = wb.get_sheet_by_name('Sheet2')  # Assuming 'Sheet2' already exists
+    ws = wb['Sheet2']  # Directly access 'Sheet2'
 
-    # Assuming the structure of data is a list of dictionaries with keys 'Channel', 'Set Temperature', 'Set Current', and 'Resistance'
-    for entry in data:
-        # Find the correct row based on the Channel and Temperature
-        channel = entry['Channel']
-        temperature = entry['Set Temperature']
-        current = entry['Set Current']
-        resistance = entry['Resistance']
-        
-        # Find the row
-        for row in range(2, ws.max_row + 1):
-            if ws.cell(row=row, column=1).value == channel and ws.cell(row=row, column=2).value == temperature:
-                # Find the correct column for the current
-                for col in range(3, ws.max_column + 1):
-                    if ws.cell(row=1, column=col).value == current:
-                        ws.cell(row=row, column=col, value=resistance)
-                        break
+    # Find the correct row and column based on the Channel, Temperature, and Current
+    for row in range(2, ws.max_row + 1):
+        if ws.cell(row=row, column=1).value == data["Channel"] and ws.cell(row=row, column=2).value == data["Set Temperature"]:
+            # Find the correct column for the current
+            for col in range(3, ws.max_column + 1):
+                if ws.cell(row=1, column=col).value == data["Set Current"]:
+                    ws.cell(row=row, column=col, value=data["Resistance"])
+                    break
 
     wb.save(path)
     wb.close()
-
 
 # Example usage:
 directory = os.getcwd()

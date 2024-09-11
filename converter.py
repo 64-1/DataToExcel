@@ -6,6 +6,7 @@ from pathlib import Path
 from openpyxl import load_workbook
 from openpyxl.utils.dataframe import dataframe_to_rows
 
+
 def read_folder_and_create_excel(directory):
     # Put all the folder names in the directory into a list
     folders = [folder for folder in os.listdir(directory) if os.path.isdir(os.path.join(directory, folder)) and '_duplicate' in folder]
@@ -125,6 +126,7 @@ def remove_other_excel_files(directory, keep_files):
                 os.remove(os.path.join(dp, file))
 
 def add_sheet_excel(directory, excel_name):
+
     # Put all the folder names in the directory into a list
     path = os.path.join(directory, excel_name)
     folders = [folder for folder in os.listdir(directory) if os.path.isdir(os.path.join(directory, folder))]
@@ -147,20 +149,53 @@ def add_sheet_excel(directory, excel_name):
 
     T = sorted(list(set(temp_values)))
     I = sorted(list(set(current_values)))
-    df = pd.DataFrame(index=T, columns=I)
 
+    index = pd.MultiIndex.from_product([range(1, 7), T], names=["Channel", "T (C)\\I (A)"])
+    df = pd.DataFrame(index=index, columns=I)
     
-    with pd.ExcelWriter(path, engine='openpyxl', mode='a') as writer:  
-        df.to_excel(writer, sheet_name='x2')
+    with pd.ExcelWriter(path, engine='openpyxl', mode='a') as writer:
+            df.to_excel(writer, sheet_name='Sheet2')
+    
+    wb = load_workbook(path)
+    ws = wb['Sheet2']
 
-    wb = load_workbook(excel_name)
-    ws = wb['x2']
-    cell = ws['A1']
-    cell.value = "T(C) \\ I(A)"
+    start_row = 2
+    for ch in range(1, 7):
+        end_row = start_row + len(T) -1
+        ws.merge_cells(start_row=start_row, start_column=1, end_row=end_row, end_column=1)
+        ws.cell(row=start_row, column=1, value=f'CH{ch}')
+        start_row = end_row + 1
 
-    wb.save(excel_name)
+    wb.save(path)
     wb.close()
-    
+
+def sort_column (directoy, excel_name):
+    target_column = 0  
+    path = os.path.join(directoy, excel_name)
+    # Load the existing workbook
+    workbook = load_workbook(path)
+    sheet = workbook.active  # Get the active sheet
+
+    # Read all data from the sheet
+    data = list(sheet.iter_rows(values_only=True))
+
+    # Separate headers and data
+    labels = data[0]    # Don't sort the headers
+    data = data[1:]     # Data begins on the second row
+
+    # Sort data by the target column
+    data.sort(key=lambda x: x[target_column])
+
+    # Write sorted data back into the same sheet
+    for idx, label in enumerate(labels):
+        sheet.cell(row=1, column=idx+1, value=label)
+
+    for idx_r, row in enumerate(data):
+        for idx_c, value in enumerate(row):
+            sheet.cell(row=idx_r+2, column=idx_c+1, value=value)
+
+    # Save the modified workbook back to the same file
+    workbook.save(path)
 
 def main():
     directory_path = os.getcwd()
@@ -168,8 +203,10 @@ def main():
     read_folder_and_create_excel(directory_path)
     read_and_update_excel(directory_path)
     combine_excel_files(directory_path, 'Result.xlsx')
+    sort_column (directory_path, 'Result.xlsx')
     remove_other_excel_files(directory_path, 'Result.xlsx')
     add_sheet_excel(directory_path, 'Result.xlsx')
+
 
 if __name__ == "__main__":
     main()

@@ -154,7 +154,7 @@ def add_sheet_excel(directory, excel_name):
     df = pd.DataFrame(index=index, columns=I)
     
     with pd.ExcelWriter(path, engine='openpyxl', mode='a') as writer:
-            df.to_excel(writer, sheet_name='Sheet2')
+        df.to_excel(writer, sheet_name='Sheet2')
     
     wb = load_workbook(path)
     ws = wb['Sheet2']
@@ -168,6 +168,8 @@ def add_sheet_excel(directory, excel_name):
 
     wb.save(path)
     wb.close()
+    
+
 
 def sort_column (directoy, excel_name):
     target_column = 0  
@@ -196,6 +198,7 @@ def sort_column (directoy, excel_name):
 
     # Save the modified workbook back to the same file
     workbook.save(path)
+
 
 def main():
     directory_path = os.getcwd()

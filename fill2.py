@@ -1,36 +1,28 @@
+import pandas as pd
 from openpyxl import load_workbook
-import os
 
-def fill_sheet2(directory, excel_name, data):
+def fill_sheet2(directory, excel_name, data, mode='a'):
     path = os.path.join(directory, excel_name)
-    wb = load_workbook(path)
-    ws = wb['Sheet2']  # Directly access 'Sheet2'
+    # Create a DataFrame from the data dictionary
+    df = pd.DataFrame([data])
 
-    print(f"Attempting to fill data for: {data}")  # Debug information
+    # Load the workbook and specify the engine to maintain compatibility
+    book = load_workbook(path)
+    writer = pd.ExcelWriter(path, engine='openpyxl')  # Define the writer
+    writer.book = book
+    writer.sheets = {ws.title: ws for ws in book.worksheets}
 
-    # Find the correct row and column based on the Channel, Temperature, and Current
-    found = False
-    for row in range(2, ws.max_row + 1):
-        channel = ws.cell(row=row, column=1).value
-        temperature = ws.cell(row=row, column=2).value
-        if channel == data["Channel"] and temperature == data["Set Temperature"]:
-            for col in range(3, ws.max_column + 1):
-                current = ws.cell(row=1, column=col).value
-                if current == data["Set Current"]:
-                    ws.cell(row=row, column=col, value=data["Resistance"])
-                    print(f"Data filled at Row: {row}, Column: {col}")  # Confirm data placement
-                    found = True
-                    break
-        if found:
-            break
+    # Write the data to 'Sheet2'; if 'Sheet2' doesn't exist, it will create it
+    if 'Sheet2' not in writer.sheets:
+        df.to_excel(writer, sheet_name='Sheet2', index=False)
+    else:
+        # Read existing data
+        existing_df = pd.read_excel(path, sheet_name='Sheet2')
+        # Concatenate new data with the existing data
+        new_df = pd.concat([existing_df, df], ignore_index=True)
+        # Write back to the Excel file
+        new_df.to_excel(writer, sheet_name='Sheet2', index=False)
 
-    if not found:
-        print("No matching row and column found for the data provided.")  # Debug if no place found
-
-    wb.save(path)
-    wb.close()
-
-# Example usage:
-directory = os.getcwd()
-excel_name = 'test.xlsx'
-update_resistance_values(directory, excel_name)
+    # Save the changes
+    writer.save()
+    writer.close()

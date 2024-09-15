@@ -4,7 +4,7 @@ import shutil
 import os
 from pathlib import Path
 from openpyxl import load_workbook
-from openpyxl.utils.dataframe import dataframe_to_rows
+
 
 
 def read_folder_and_create_excel(directory):
@@ -125,8 +125,8 @@ def remove_other_excel_files(directory, keep_files):
             if file.endswith('.xlsx') and file != keep_files:
                 os.remove(os.path.join(dp, file))
 
+    
 def add_sheet_excel(directory, excel_name):
-
     # Put all the folder names in the directory into a list
     path = os.path.join(directory, excel_name)
     folders = [folder for folder in os.listdir(directory) if os.path.isdir(os.path.join(directory, folder))]
@@ -134,7 +134,6 @@ def add_sheet_excel(directory, excel_name):
     current_values = []
     # Extract the temperature and current setting and save them in a dataframe
     for folder in folders:
-
         if 'C' in folder and 'A' in folder:
             temp_index = folder.index('C')
             curr_index = folder.index('A')
@@ -152,23 +151,29 @@ def add_sheet_excel(directory, excel_name):
 
     index = pd.MultiIndex.from_product([range(1, 7), T], names=["Channel", "T (C)\\I (A)"])
     df = pd.DataFrame(index=index, columns=I)
-    
+
     with pd.ExcelWriter(path, engine='openpyxl', mode='a') as writer:
         df.to_excel(writer, sheet_name='Sheet2')
-    
+
     wb = load_workbook(path)
     ws = wb['Sheet2']
 
-    start_row = 2
+    # Unmerge all merged cells in the worksheet
+    merged_cells = list(ws.merged_cells)
+    for merged_cell in merged_cells:
+        ws.unmerge_cells(range_string=str(merged_cell))
+
+    # Write the channel labels and temperature values into the appropriate cells
+    start_row = 2  # Adjust based on header rows in your DataFrame
+    total_temperatures = len(T)
     for ch in range(1, 7):
-        end_row = start_row + len(T) -1
-        ws.merge_cells(start_row=start_row, start_column=1, end_row=end_row, end_column=1)
-        ws.cell(row=start_row, column=1, value=f'CH{ch}')
-        start_row = end_row + 1
+        for i in range(total_temperatures):
+            row = start_row + (ch - 1) * total_temperatures + i
+            ws.cell(row=row, column=1, value=f'CH{ch}')  # Channel
+            ws.cell(row=row, column=2, value=T[i])       # Temperature
 
     wb.save(path)
     wb.close()
-    
 
 
 def sort_column (directoy, excel_name):

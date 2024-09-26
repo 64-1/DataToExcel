@@ -2,34 +2,60 @@ import os
 import sys
 import numpy as np
 import pandas as pd
+import re
 from openpyxl import load_workbook
 from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QFileDialog, QVBoxLayout
 
 def read_data_from_folders(directory):
-    folders = [folder for folder in os.listdir(directory) if os.path.isdir(os.path.join(directory, folder)) and 'A' in folder and 'C' in folder]
+    import re
+
+    # Regular expression to match folder names like '25C5A'
+    folder_pattern = re.compile(r'([\d.]+)C([\d.]+)A')
+
+    folders = [folder for folder in os.listdir(directory) if os.path.isdir(os.path.join(directory, folder))]
     all_data = []
     for folder in folders:
         folder_path = os.path.join(directory, folder)
 
-        if 'C' in folder and 'A' in folder:
-            temp_index = folder.index('C')
-            curr_index = folder.index('A')
-
-            try:
-                temperature = float(folder[:temp_index])
-                current = float(folder[temp_index+1:curr_index])
-            except ValueError:
-                continue
+        # Use regex to extract temperature and current
+        match = folder_pattern.search(folder)
+        if match:
+            temperature = float(match.group(1))
+            current = float(match.group(2))
         else:
+            print(f"Folder name {folder} does not match pattern.")
             continue
 
-        # Process all .txt files in the folder
+        print(f"Processing folder: {folder}, Temperature: {temperature}, Current: {current}")
+
+        total_rows_added = 0  # Initialize counter for this folder
+
+        # Process all .all files in the folder
         for filename in os.listdir(folder_path):
-            if filename.endswith('.txt'):
+            if filename.endswith('.all'):
+                print(f"Found .all file: {filename} in folder {folder}")
                 file_path = os.path.join(folder_path, filename)
                 with open(file_path, 'r') as file:
-                    lines = [line.strip().split() for line in file.readlines()[:7]]
-                    data = np.array(lines, dtype=float)
+                    lines = [line.strip().split() for line in file.readlines()]
+                    print(f"Read {len(lines)} lines from {filename}")
+                    if not lines:
+                        print(f"No lines read from {filename}")
+                        continue
+                    else:
+                        print(f"First few lines from {filename}: {lines[:3]}")
+
+                    try:
+                        data = np.array(lines, dtype=float)
+                    except ValueError as e:
+                        print(f"Could not convert data in file {file_path} to float. Error: {e}")
+                        continue
+
+                    print(f"Data shape: {data.shape}")
+                    print(f"Data: {data}")
+
+                    if data.shape[0] < 7 or data.shape[1] < 7:
+                        print(f"Data in {filename} does not have expected dimensions.")
+                        continue
 
                     time = data[0, 0]
                     set_temperature = temperature
@@ -39,24 +65,40 @@ def read_data_from_folders(directory):
                     voltages = data[1:, 0]
                     resistances = voltages / currents
 
-                    # For each channel, create a row
+                    print(f"Currents: {currents}")
+                    print(f"Voltages: {voltages}")
+                    print(f"Resistances: {resistances}")
+
+                    if len(currents) < 6 or len(voltages) < 6:
+                        print(f"Insufficient data in {filename}: currents length {len(currents)}, voltages length {len(voltages)}")
+                        continue
+
+                    # Create a row with all channel data
+                    row = {
+                        'time': time,
+                        'Set Temperature': set_temperature,
+                        'Set Current': set_current,
+                        'actual temperature': actual_temperature,
+                    }
+
                     for i, ch in enumerate(range(1, 7)):
-                        row = {
-                            'time': time,
-                            'Set Temperature': set_temperature,
-                            'Set Current': set_current,
-                            'actual temperature': actual_temperature,
-                            'Channel': f'CH{ch}',
-                            'Actual Current': currents[i],
-                            'Actual Voltage': voltages[i],
-                            'Resistance': resistances[i]
-                        }
-                        all_data.append(row)
+                        row[f'Actual Current CH{ch}'] = currents[i]
+                        row[f'Actual Voltage CH{ch}'] = voltages[i]
+                        row[f'Resistance CH{ch}'] = resistances[i]
+
+                    all_data.append(row)
+                    total_rows_added += 1
+            else:
+                print(f"Skipping non-.all file: {filename} in folder {folder}")
+
+        print(f"Total rows added from folder {folder}: {total_rows_added}")
+
+    print(f"Total rows collected: {len(all_data)}")
     df = pd.DataFrame(all_data)
     return df
 
 def sort_column(directory, excel_name):
-    target_column = 0  
+    target_column = 1  # Assuming 'Set Temperature' is the second column (index 1)
     path = os.path.join(directory, excel_name)
     # Load the existing workbook
     workbook = load_workbook(path)
@@ -64,6 +106,10 @@ def sort_column(directory, excel_name):
 
     # Read all data from the sheet
     data = list(sheet.iter_rows(values_only=True))
+
+    if not data:
+        print("No data found in the sheet.")
+        return
 
     # Separate headers and data
     labels = data[0]    # Don't sort the headers
@@ -73,8 +119,8 @@ def sort_column(directory, excel_name):
     data.sort(key=lambda x: x[target_column])
 
     # Write sorted data back into the same sheet
-    for idx, label in enumerate(labels):
-        sheet.cell(row=1, column=idx+1, value=label)
+    for idx_c, label in enumerate(labels):
+        sheet.cell(row=1, column=idx_c+1, value=label)
 
     for idx_r, row in enumerate(data):
         for idx_c, value in enumerate(row):
@@ -100,15 +146,16 @@ def add_sheet_excel(directory, excel_name):
         ws = wb.create_sheet('Sheet2')
 
     start_row = 1
-    for ch in sorted(df['Channel'].unique()):
+    for ch in range(1, 7):
+        ch_str = f'CH{ch}'
         # Add Channel label
-        ws.cell(row=start_row, column=1, value=ch)
+        ws.cell(row=start_row, column=1, value=ch_str)
 
-        # Get data for this channel
-        ch_data = df[df['Channel'] == ch]
+        # Prepare data for this channel
+        ch_data = df[['Set Temperature', 'Set Current', f'Resistance CH{ch}']]
 
         # Pivot the data so that temperatures are rows and currents are columns
-        pivot_table = ch_data.pivot_table(values='Resistance', index='Set Temperature', columns='Set Current')
+        pivot_table = ch_data.pivot_table(values=f'Resistance CH{ch}', index='Set Temperature', columns='Set Current')
 
         # Sort the index and columns
         pivot_table = pivot_table.reindex(index=T, columns=I)
@@ -139,68 +186,57 @@ def add_sheet_excel(directory, excel_name):
 def update_resistance_values(directory, excel_name):
     path = os.path.join(directory, excel_name)
     wb = load_workbook(path)
-    ws_main = wb.active  # Assuming the data is in the active sheet
-
-    # Initialize column indices
-    col_indices = {
-        "time": None,
-        "Set Temperature": None,
-        "Set Current": None,
-        "Channel": None,
-        "Resistance": None
-    }
-
-    # Find all relevant columns in the header row
-    for cell in ws_main[1]:
-        for key in col_indices:
-            if cell.value and key.lower() in str(cell.value).lower():
-                col_indices[key] = cell.column
-
-    # Build a dictionary to store the maximum time for each (Channel, Set Temperature, Set Current)
-    max_time_rows = {}  # Key: (Channel, Set Temperature, Set Current), Value: (max_time, row_number, resistance)
-
-    # Iterate over all data rows to find the maximum time for each combination
-    for row_number in range(2, ws_main.max_row + 1):
-        try:
-            set_temp = float(ws_main.cell(row=row_number, column=col_indices["Set Temperature"]).value)
-            set_current = float(ws_main.cell(row=row_number, column=col_indices["Set Current"]).value)
-            time_value = float(ws_main.cell(row=row_number, column=col_indices["time"]).value)
-            channel = ws_main.cell(row=row_number, column=col_indices["Channel"]).value
-            resistance = ws_main.cell(row=row_number, column=col_indices["Resistance"]).value
-        except (TypeError, ValueError):
-            continue  # Skip rows with invalid data
-
-        key = (channel, set_temp, set_current)
-        if key not in max_time_rows or time_value > max_time_rows[key][0]:
-            max_time_rows[key] = (time_value, row_number, resistance)
-
-    # Open Sheet2
     ws_sheet2 = wb['Sheet2']
 
+    # Read the main data
+    df = pd.read_excel(path)
+
+    # For each Set Temperature and Set Current, find the row with maximum time
+    grouped = df.groupby(['Set Temperature', 'Set Current'])
+
+    max_time_rows = grouped.apply(lambda x: x.loc[x['time'].idxmax()])
+
     # Build a mapping of channel to starting row in Sheet2
-    channel_start_rows = {}
+    channel_data_info = {}
     row_num = 1
     while row_num <= ws_sheet2.max_row:
         cell_value = ws_sheet2.cell(row=row_num, column=1).value
         if cell_value and isinstance(cell_value, str) and cell_value.startswith('CH'):
             channel = cell_value
-            channel_start_rows[channel] = row_num
-            # Skip the header rows (assume header is 2 rows)
-            num_data_rows = len(set(df['Set Temperature'])) + 1  # +1 for header
-            row_num += num_data_rows + 2  # +2 for data rows and empty rows
+            # Data starts two rows below the channel label
+            data_start_row = row_num + 2
+            # Find the end of the data block
+            data_end_row = data_start_row
+            while data_end_row <= ws_sheet2.max_row:
+                temp_cell_value = ws_sheet2.cell(row=data_end_row, column=1).value
+                if temp_cell_value is None or (isinstance(temp_cell_value, str) and temp_cell_value.startswith('CH')):
+                    break
+                data_end_row += 1
+            # Record the data range for this channel
+            channel_data_info[channel] = {
+                'currents_row': data_start_row - 1,
+                'data_start_row': data_start_row,
+                'data_end_row': data_end_row - 1
+            }
+            # Continue from the end of this data block
+            row_num = data_end_row
         else:
             row_num += 1
 
-    # Process each entry with the maximum time
-    for (channel, set_temp, set_current), (max_time, row_number, resistance_value) in max_time_rows.items():
-        # Find the starting row for the channel in Sheet2
-        if channel not in channel_start_rows:
-            print(f"Channel {channel} not found in Sheet2.")
-            continue
-        start_row = channel_start_rows[channel] + 1  # Data starts 1 row below the channel label
+    T = sorted(df['Set Temperature'].unique())
+    I = sorted(df['Set Current'].unique())
 
-        # Find the currents in the header row (start_row + 1)
-        currents_row = start_row + 1
+    for ch in range(1, 7):
+        ch_str = f'CH{ch}'
+        if ch_str not in channel_data_info:
+            print(f"Channel {ch_str} not found in Sheet2.")
+            continue
+        data_info = channel_data_info[ch_str]
+        currents_row = data_info['currents_row']
+        data_start_row = data_info['data_start_row']
+        data_end_row = data_info['data_end_row']
+
+        # Get the mapping of currents to columns
         currents = {}
         for col in range(2, ws_sheet2.max_column + 1):
             current_value = ws_sheet2.cell(row=currents_row, column=col).value
@@ -208,32 +244,34 @@ def update_resistance_values(directory, excel_name):
                 current_value = float(current_value)
                 currents[current_value] = col
             except (TypeError, ValueError):
-                continue  # Skip if the value cannot be converted to float
+                continue
 
-        if set_current not in currents:
-            print(f"Set Current {set_current} not found in Sheet2 for {channel}.")
-            continue
-        current_col = currents[set_current]
-
-        # Find the row that matches the Set Temperature
-        found_row = None
-        for row in range(currents_row + 1, currents_row + 1 + len(set(df['Set Temperature']))):
+        # Build a mapping of temperatures to rows
+        temperatures = {}
+        for row in range(data_start_row, data_end_row + 1):
             temperature_value = ws_sheet2.cell(row=row, column=1).value
             try:
                 temp_value = float(temperature_value)
+                temperatures[temp_value] = row
             except (TypeError, ValueError):
-                continue  # Skip rows with invalid temperature values
+                continue
 
-            if temp_value == set_temp:
-                found_row = row
-                break
+        # Now, for each (Set Temperature, Set Current), update the resistance value
+        for (set_temp, set_current), row_data in max_time_rows.iterrows():
+            resistance_value = row_data[f'Resistance CH{ch}']
 
-        if found_row is None:
-            print(f"Temperature {set_temp} not found in Sheet2 for {channel}.")
-            continue
+            if set_current not in currents:
+                print(f"Set Current {set_current} not found in Sheet2 for {ch_str}.")
+                continue
+            current_col = currents[set_current]
 
-        # Write the Resistance value into the correct cell
-        ws_sheet2.cell(row=found_row, column=current_col, value=resistance_value)
+            if set_temp not in temperatures:
+                print(f"Temperature {set_temp} not found in Sheet2 for {ch_str}.")
+                continue
+            found_row = temperatures[set_temp]
+
+            # Write the Resistance value into the correct cell
+            ws_sheet2.cell(row=found_row, column=current_col, value=resistance_value)
 
     wb.save(path)
     wb.close()
@@ -267,6 +305,12 @@ def main(directory_path):
     print("Reading data from folders...")
     df = read_data_from_folders(directory_path)
     print("Data read successfully.")
+    print(df.head())
+    print(f"DataFrame shape: {df.shape}")
+
+    if df.empty:
+        print("No data was read from the folders.")
+        return
 
     # Write data to 'Result.xlsx'
     output_path = os.path.join(directory_path, 'Result.xlsx')
@@ -299,4 +343,3 @@ if __name__ == "__main__":
         main(selected_directory)
     else:
         print("No folder was selected.")
-            

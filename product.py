@@ -53,14 +53,20 @@ def read_data_from_folders(directory):
                     print(f"Data shape: {data.shape}")
                     print(f"Data: {data}")
 
-                    if data.shape[0] < 7 or data.shape[1] < 7:
+                    # Check if data dimensions are as expected
+                    if data.shape[0] < 2 or data.shape[1] < 7:
                         print(f"Data in {filename} does not have expected dimensions.")
                         continue
+
+                    num_channels = data.shape[0] - 1  # Subtracting the header row
 
                     time = data[0, 0]
                     set_temperature = temperature
                     set_current = current
                     actual_temperature = data[0, 1]
+
+                    # Extract currents and voltages
+                    # Assuming currents are in column 6, voltages are in column 0
                     currents = data[1:, 6]
                     voltages = data[1:, 0]
                     resistances = voltages / currents
@@ -69,7 +75,7 @@ def read_data_from_folders(directory):
                     print(f"Voltages: {voltages}")
                     print(f"Resistances: {resistances}")
 
-                    if len(currents) < 6 or len(voltages) < 6:
+                    if len(currents) < num_channels or len(voltages) < num_channels:
                         print(f"Insufficient data in {filename}: currents length {len(currents)}, voltages length {len(voltages)}")
                         continue
 
@@ -81,7 +87,7 @@ def read_data_from_folders(directory):
                         'actual temperature': actual_temperature,
                     }
 
-                    for i, ch in enumerate(range(1, 7)):
+                    for i, ch in enumerate(range(1, num_channels+1)):
                         row[f'Actual Current CH{ch}'] = currents[i]
                         row[f'Actual Voltage CH{ch}'] = voltages[i]
                         row[f'Resistance CH{ch}'] = resistances[i]
@@ -138,6 +144,11 @@ def add_sheet_excel(directory, excel_name):
     T = sorted(df['Set Temperature'].unique())
     I = sorted(df['Set Current'].unique())
 
+    # Determine the number of channels from the DataFrame columns
+    resistance_cols = [col for col in df.columns if col.startswith('Resistance CH')]
+    channels = [col.replace('Resistance ', '') for col in resistance_cols]
+    num_channels = len(channels)
+
     # Create a workbook and add Sheet2
     wb = load_workbook(path)
     if 'Sheet2' in wb.sheetnames:
@@ -146,16 +157,16 @@ def add_sheet_excel(directory, excel_name):
         ws = wb.create_sheet('Sheet2')
 
     start_row = 1
-    for ch in range(1, 7):
-        ch_str = f'CH{ch}'
+    for ch in channels:
+        ch_str = ch
         # Add Channel label
         ws.cell(row=start_row, column=1, value=ch_str)
 
         # Prepare data for this channel
-        ch_data = df[['Set Temperature', 'Set Current', f'Resistance CH{ch}']]
+        ch_data = df[['Set Temperature', 'Set Current', f'Resistance {ch}']]
 
         # Pivot the data so that temperatures are rows and currents are columns
-        pivot_table = ch_data.pivot_table(values=f'Resistance CH{ch}', index='Set Temperature', columns='Set Current')
+        pivot_table = ch_data.pivot_table(values=f'Resistance {ch}', index='Set Temperature', columns='Set Current')
 
         # Sort the index and columns
         pivot_table = pivot_table.reindex(index=T, columns=I)
@@ -226,8 +237,12 @@ def update_resistance_values(directory, excel_name):
     T = sorted(df['Set Temperature'].unique())
     I = sorted(df['Set Current'].unique())
 
-    for ch in range(1, 7):
-        ch_str = f'CH{ch}'
+    # Get the list of channels from the DataFrame
+    resistance_cols = [col for col in df.columns if col.startswith('Resistance CH')]
+    channels = [col.replace('Resistance ', '') for col in resistance_cols]
+
+    for ch in channels:
+        ch_str = ch
         if ch_str not in channel_data_info:
             print(f"Channel {ch_str} not found in Sheet2.")
             continue
@@ -258,7 +273,7 @@ def update_resistance_values(directory, excel_name):
 
         # Now, for each (Set Temperature, Set Current), update the resistance value
         for (set_temp, set_current), row_data in max_time_rows.iterrows():
-            resistance_value = row_data[f'Resistance CH{ch}']
+            resistance_value = row_data[f'Resistance {ch}']
 
             if set_current not in currents:
                 print(f"Set Current {set_current} not found in Sheet2 for {ch_str}.")

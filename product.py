@@ -58,8 +58,6 @@ def read_data_from_folders(directory):
                         print(f"Data in {filename} does not have expected dimensions.")
                         continue
 
-                    num_channels = data.shape[0] - 1  # Subtracting the header row
-
                     time = data[0, 0]
                     set_temperature = temperature
                     set_current = current
@@ -75,11 +73,21 @@ def read_data_from_folders(directory):
                     print(f"Voltages: {voltages}")
                     print(f"Resistances: {resistances}")
 
-                    if len(currents) < num_channels or len(voltages) < num_channels:
-                        print(f"Insufficient data in {filename}: currents length {len(currents)}, voltages length {len(voltages)}")
+                    # Identify valid channels (where currents or voltages are non-zero)
+                    valid_indices = []
+                    for i in range(len(currents)):
+                        if currents[i] != 0 and voltages[i] != 0:
+                            valid_indices.append(i)
+                        else:
+                            # Stop processing further channels once a zero value is encountered
+                            break
+
+                    num_channels = len(valid_indices)
+                    if num_channels == 0:
+                        print(f"No valid channels found in {filename}")
                         continue
 
-                    # Create a row with all channel data
+                    # Create a row with all valid channel data
                     row = {
                         'time': time,
                         'Set Temperature': set_temperature,
@@ -87,7 +95,8 @@ def read_data_from_folders(directory):
                         'actual temperature': actual_temperature,
                     }
 
-                    for i, ch in enumerate(range(1, num_channels+1)):
+                    for idx, i in enumerate(valid_indices):
+                        ch = idx + 1  # Channel numbering starts from 1
                         row[f'Actual Current CH{ch}'] = currents[i]
                         row[f'Actual Voltage CH{ch}'] = voltages[i]
                         row[f'Resistance CH{ch}'] = resistances[i]
@@ -273,7 +282,10 @@ def update_resistance_values(directory, excel_name):
 
         # Now, for each (Set Temperature, Set Current), update the resistance value
         for (set_temp, set_current), row_data in max_time_rows.iterrows():
-            resistance_value = row_data[f'Resistance {ch}']
+            resistance_value = row_data.get(f'Resistance {ch}', None)
+
+            if resistance_value is None:
+                continue
 
             if set_current not in currents:
                 print(f"Set Current {set_current} not found in Sheet2 for {ch_str}.")

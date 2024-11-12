@@ -1,21 +1,124 @@
-36: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which 
-uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.        
-  model.load_state_dict(torch.load('u2net_epoch_100.pth', map_location=device))
-C:\Users\siyiliu2\Desktop\cnnv3\U-2-Net\model\u2net.py:23: UserWarning: `nn.functional.upsample` is deprecated. Use `nn.functional.interpolate` instead.   
-  src = F.upsample(src,size=tar.shape[2:],mode='bilinear')
-Traceback (most recent call last):
-  File "C:\Users\siyiliu2\Desktop\cnnv3\U-2-Net\test.py", line 41, in <module>
-    for batch in test_loader:
-  File "C:\Users\siyiliu2\AppData\Local\anaconda3\envs\cnn\lib\site-packages\torch\utils\data\dataloader.py", line 701, in __next__   
-    data = self._next_data()
-  File "C:\Users\siyiliu2\AppData\Local\anaconda3\envs\cnn\lib\site-packages\torch\utils\data\dataloader.py", line 757, in _next_data
-    data = self._dataset_fetcher.fetch(index)  # may raise StopIteration
-  File "C:\Users\siyiliu2\AppData\Local\anaconda3\envs\cnn\lib\site-packages\torch\utils\data\_utils\fetch.py", line 52, in fetch
-    data = [self.dataset[idx] for idx in possibly_batched_index]
-  File "C:\Users\siyiliu2\AppData\Local\anaconda3\envs\cnn\lib\site-packages\torch\utils\data\_utils\fetch.py", line 52, in <listcomp>
-    data = [self.dataset[idx] for idx in possibly_batched_index]
-  File "C:\Users\siyiliu2\Desktop\cnnv3\U-2-Net\data_loader.py", line 296, in __getitem__
-    image = Image.open(img_path).convert('RGB')
-  File "C:\Users\siyiliu2\AppData\Local\anaconda3\envs\cnn\lib\site-packages\PIL\Image.py", line 3123, in open
-    raise UnidentifiedImageError(
-PIL.UnidentifiedImageError: cannot identify image file '../dataset/images/test/FP11_6_X20_01 - Shortcut.lnk'
+<?xml version="1.0" encoding="utf-8"?>
+<data>
+  <item>
+    <source_path>Gauge entries/Line 1/Strains/Gauge Strain/Eng. Line Strain</source_path>
+    <target_name>e_line</target_name>
+	<time_steps>[:]</time_steps>
+  </item>
+  <item>
+    <source_path>Gauge entries/Analog Channels/Sample/Absolute</source_path>
+    <target_name>temp</target_name>
+	<time_steps>[:]</time_steps>
+  </item>
+</data>
+<script>CTE_Line 1.sci</script>
+
+
+// This script determines the CTE (Thermal expansion coefficient):
+// 		1. Plots diagram strain vs. temperature
+// 		2. Determines the CTE via linear fit 
+//		3. Plots linear fit and shows CTE coefficient
+//
+// Requirements: 
+//		1. DIC Analysed test with temperature data
+//		2. Polygon Gauge element with name "Line 1"
+//
+//  Change History
+//  V 0     15.09.2015, Ralf Lichtenberger, www.LIMESS.com
+//  V 1     19.10.2015, TST, Dantec Dynamics GmbH
+//          
+//****************************************************************************
+
+// General definitions
+
+// Map value to variable
+data_Y=e_line.value;
+data_X=temp.value;
+unit_Y=e_line.unit;
+unit_X=temp.unit;
+
+fonts=3;	// fontsize
+fig_thickness=2;    // line thickness
+fig_background=8;       // color for background
+fig_foreground=3;       // color for foreground
+fig_fillmode=1;
+
+fig_size=[800 600];
+fig_pos=[0 50];
+txt_title="CTE calculation";
+txt_xlabel="Temperature / "+unit_X;
+txt_ylabel="Strain / µstrain";
+txt_legend="Strain";
+fig_legend="in_lower_right";
+txt_infomessage="CTE calculation with Istra4D";
+
+// Define scaling depending on unit
+// Strain in µstrain
+select unit_Y
+case "strain" then
+    scale_Y=100000;
+case "%" then
+    scale_Y=10000;
+case ascii(176)+"/oo" then
+    scale_Y=1000;
+case "mstrain" then
+    scale_Y=1000;
+case "ustrain" then
+    scale_Y=1;
+else
+    disp(sprintf("Unknown unit %s",unit_Y));
+    disp(ascii(unit_Y));
+    scale_Y=1;
+end
+data_Y=data_Y*scale_Y;
+
+// Apply mask to remove bad points from linear fit, detect number of bad points
+data_Y(find (e_line.mask == 0)) = %nan;
+snan=isnan(data_Y);
+nancount=sum(snan);
+disp(nancount);
+
+// fit linear function to data 
+if nancount==0 then
+	[ra,rb,sig]=reglin(data_X.',data_Y.');		// Fit parameter without Nans
+	disp ("reglin");
+else
+	disp ("nanananana");
+	[ra,rb]=nanreglin(data_X.',data_Y.');		// Fit parameter if Nans are in data
+end	
+
+// Determine value range for lineplot clipping
+tempmin=min(data_X);
+tempmax=max(data_X);
+strainmin=min(data_Y);
+strainmax=max(data_Y);
+
+
+// Draw diagram strain vs. temperature with fit for Young's modulus
+fh1=figure(1);
+fh1.figure_size=fig_size;
+fh1.figure_position=fig_pos;	
+fh1.figure_name="Istra4D "+txt_title+" (fig %d)";
+fh1.info_message=txt_infomessage;
+fh1.background=fig_background;									// white;
+title(txt_title, "fontsize", fonts);
+xlabel(txt_xlabel, "fontsize", fonts);
+ylabel(txt_ylabel, "fontsize", fonts);
+xgrid();
+a=get("current_axes");
+a.font_size=fonts;
+xset("thickness",2);
+plot2d(data_X, data_Y, 2);
+xset("thickness",2);
+
+plot2d(data_X, ra*data_X+rb, 3, rect=[tempmin,strainmin,tempmax, strainmax], frameflag=0); 
+xset("thickness",1); 
+mitte_x=tempmin;
+mitte_y=(strainmin+strainmax)/2;
+outputstring=msprintf("CTE= %6.3f*10-6/K",ra);
+xstring (mitte_x,mitte_y,[outputstring], 0, 1);
+t=get ("hdl");
+t.foreground=fig_foreground;
+t.background=fig_background;
+t.fill_mode=fig_fillmode;
+t.font_size=fonts+1;
